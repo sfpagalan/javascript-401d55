@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "javascript-401d55",
+    "slug": "javascript-401d55",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

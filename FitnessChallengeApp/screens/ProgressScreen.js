@@ -1,29 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import ProgressBar from '../components/ProgressBar';
+import { extractTotalFromChallenge } from '../utility/challenges';
+import { ChallengesContext } from '../context/ChallengesContext';
 
-export default function ProgressScreen({ route }) {
-    const [completedChallenges, setCompletedChallenges] = useState(route.params?.completedChallenges || []);
+export default function ProgressScreen() {
+    const { completedChallenges } = useContext(ChallengesContext);
 
-    useEffect(() => {
-        if (route.params?.completedChallenges) {
-            setCompletedChallenges(route.params.completedChallenges);
-        }
-    }, [route.params?.completedChallenges]);
+    // useEffect(() => {
+    //     if (route.params?.completedChallenges) {
+    //         setCompletedChallenges(route.params.completedChallenges);
+    //     }
+    // }, [route.params?.completedChallenges]);
 
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.progressBarContainer}>
-                <ProgressBar completedChallenges={completedChallenges} />
-            </View>
             <Text style={styles.header}>Completed Challenges:</Text>
-            {completedChallenges.map((challenge, index) => (
-                <View key={index} style={styles.challengeItem}>
-                    <Text style={styles.challengeText}>
-                        {`${challenge.activity} - Achieved: ${challenge.userAchievement}`}
-                    </Text>
-                </View>
-            ))}
+            {completedChallenges.map((challenge, index) => {
+                const total = extractTotalFromChallenge(challenge.activity);
+                return (
+                    <View key={index} style={styles.challengeItem}>
+                        <Text style={styles.challengeText}>
+                            {challenge.activity}
+                        </Text>
+                        <ProgressBar 
+                            progress={Number(challenge.userAchievement)} 
+                            total={total}
+                        />
+                    </View>
+                );
+            })}
         </ScrollView>
     );
 }

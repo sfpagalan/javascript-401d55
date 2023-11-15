@@ -1,9 +1,14 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { ChallengesProvider } from './context/ChallengesContext';
 import AppNavigator from './navigation/AppNavigator';
 
 export default function App() {
-  return <AppNavigator />;
+  return (
+    <ChallengesProvider>
+      <AppNavigator />
+    </ChallengesProvider>
+  );
 }
 
 const styles = StyleSheet.create({

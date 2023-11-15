@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView } from 'react-native';
-import { getThreeRandomChallenges } from '../utility/challenges';
+import { getAllChallenges } from '../utility/challenges';
+import { ChallengesContext } from '../context/ChallengesContext';
 
 export default function ChallengeScreen({ route, navigation }) {
+  const { completedChallenges, setCompletedChallenges } = useContext(ChallengesContext);
   const [selectedTheme, setSelectedTheme] = useState(route.params?.theme || null);
-  const [challenges, setChallenges] = useState(getThreeRandomChallenges(selectedTheme));
-  const [completedChallenges, setCompletedChallenges] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  // const [completedChallenges, setCompletedChallenges] = useState([]);
   const [userAchievement, setUserAchievement] = useState({});
 
-  const refreshChallenges = () => {
-    setChallenges(getThreeRandomChallenges(selectedTheme));
-  };
+  useEffect(() => {
+    if (selectedTheme) {
+      setChallenges(getAllChallenges(selectedTheme));
+    }
+  }, [selectedTheme]);
 
   const completeChallenge = (challengeId) => {
     const completedChallenge = challenges.find(challenge => challenge.id === challengeId);
     if (completedChallenge) {
       completedChallenge.userAchievement = userAchievement[challengeId] || 0;
       setCompletedChallenges([...completedChallenges, completedChallenge]);
-      refreshChallenges();
     }
   };
 
@@ -26,7 +29,7 @@ export default function ChallengeScreen({ route, navigation }) {
   };
 
   const navigateToProgress = () => {
-    navigation.navigate('Progress', { completedChallenges: completedChallenges });
+    navigation.navigate('Progress', { completedChallenges });
   };
 
   return (
@@ -53,9 +56,10 @@ export default function ChallengeScreen({ route, navigation }) {
               <Text style={styles.activityText}>{challenge.activity}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Achieved Reps"
+                placeholder="Enter your progress"
                 onChangeText={(text) => onAchievementChange(challenge.id, text)}
                 keyboardType="numeric"
+                value={String(userAchievement[challenge.id] || '')}
               />
               <TouchableOpacity 
                 style={styles.buttonContainer}
@@ -65,12 +69,7 @@ export default function ChallengeScreen({ route, navigation }) {
             </View>
           ))}
           <TouchableOpacity 
-            style={styles.buttonContainer}
-            onPress={refreshChallenges}>
-            <Text style={styles.buttonText}>Refresh Challenges</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.buttonContainer}
+            style={styles.buttonContainer2}
             onPress={navigateToProgress}>
             <Text style={styles.buttonText}>View Progress</Text>
           </TouchableOpacity>
@@ -91,7 +90,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     header: {
-        fontSize: 22,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#E63946',
         marginBottom: 20,
@@ -133,6 +132,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginVertical: 10,
         alignItems: 'center',
+    },
+    buttonContainer2: {
+      backgroundColor: '#2A9D8F',
+      borderRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      marginVertical: 10,
+      alignItems: 'center',
+      marginBottom: 80,
     },
     buttonText: {
         color: 'white',

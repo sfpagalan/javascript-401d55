@@ -18,6 +18,12 @@ export default function HomeScreen({ navigation }) {
             onPress={() => navigation.navigate('Progress')}>
             <Text style={styles.buttonText}>Go to Progress</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate('Camera')}>
+            <Text style={styles.buttonText}>Go to Camera</Text>
+        </TouchableOpacity>
     </View>
   );
 }
